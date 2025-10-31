@@ -7,6 +7,10 @@
 	"name": "api",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-10-31",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": "./public"
+	},
 	"observability": {
 		"enabled": true
 	}
