@@ -5,14 +5,22 @@
 		"dev": "wrangler dev",
 		"deploy": "wrangler deploy --minify",
 		"lint": "eslint --max-warnings 0",
-		"cf-typegen": "wrangler types --env-interface CloudflareBindings"
+		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
+		"type-check": "tsc --noEmit",
+		"test": "vitest",
+		"test:watch": "vitest --watch",
+		"test:coverage": "vitest --coverage"
 	},
 	"dependencies": {
 		"hono": "^4.10.4"
 	},
 	"devDependencies": {
 		"@audiph/eslint-config": "workspace:*",
+		"@audiph/typescript-config": "workspace:*",
 		"eslint": "^9.38.0",
-		"wrangler": "^4.45.3"
+		"typescript": "^5.9.2",
+		"wrangler": "^4.45.3",
+		"vitest": "^2.1.8",
+		"@vitest/coverage-v8": "^2.1.8"
 	}
 }

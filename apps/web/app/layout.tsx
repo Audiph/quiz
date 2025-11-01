@@ -1,5 +1,5 @@
+import { Toaster } from '@audiph/ui/components/sonner';
 import '@audiph/ui/styles.css';
-import { Toaster } from "@audiph/ui/components/sonner";
 import type { Metadata } from 'next';
 import { Geist } from 'next/font/google';
 import './globals.css';
