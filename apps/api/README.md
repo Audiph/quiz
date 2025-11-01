@@ -8,15 +8,30 @@ A RESTful quiz application API built with Hono framework running on Cloudflare W
 - **Deterministic Shuffling**: Questions and choices can be shuffled consistently using seed-based randomization
 - **Automatic Grading**: Validates and grades user answers with detailed results
 - **Mock Data**: 12 diverse quiz questions covering various topics (no database required)
-- **CORS Support**: Configured for frontend integration
+- **CORS Support**: Environment-based CORS configuration for secure frontend integration
 - **Type Safety**: Built with TypeScript for full type safety
 - **Edge Runtime**: Optimized for Cloudflare Workers edge computing
 - **Comprehensive Testing**: Unit tests for grading logic, validation, and shuffling
 
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Generate TypeScript types
+pnpm cf-typegen
+
+# Start development server
+pnpm dev
+
+# API will be available at http://localhost:8787
+```
+
 ## Installation
 
 ```bash
-# Navigate to the API directory
+# Navigate to the API directory (if not in monorepo root)
 cd apps/api
 
 # Install dependencies
@@ -41,11 +56,14 @@ pnpm test:watch
 # Run tests with coverage
 pnpm test:coverage
 
-# Type checking (via TypeScript compiler)
-pnpm check-types
+# Type checking
+pnpm type-check
 
 # Lint code
 pnpm lint
+
+# Generate TypeScript bindings from Cloudflare configuration
+pnpm cf-typegen
 ```
 
 ## API Endpoints
@@ -270,30 +288,75 @@ apps/api/
 
 ## Deployment
 
+### Prerequisites
+
+1. Create a Cloudflare account and install Wrangler CLI
+2. Login to Cloudflare:
+
+```bash
+wrangler login
+```
+
 ### Deploy to Cloudflare Workers
 
 ```bash
-# Deploy to production
+# Deploy to production (minified)
 pnpm deploy
+
+# Deploy without minification (for debugging)
+wrangler deploy
 
 # Deploy to a specific environment
 wrangler deploy --env staging
 ```
 
+### Production URL
+
+Once deployed, your API will be available at:
+
+```
+https://api.[your-subdomain].workers.dev
+```
+
+### Monitoring
+
+The API has observability enabled in `wrangler.jsonc`, allowing you to:
+
+- View real-time logs in the Cloudflare dashboard
+- Monitor performance metrics
+- Track error rates and response times
+
 ### Environment Configuration
 
 Configure your deployment in `wrangler.jsonc`:
 
-```json
+```jsonc
 {
-  "name": "quiz-api",
+  "name": "api",
   "main": "src/index.ts",
   "compatibility_date": "2025-10-31",
   "observability": {
-    "enabled": true
-  }
+    "enabled": true,
+  },
+  "vars": {
+    "CORS_ALLOWED_ORIGINS": "http://localhost:3000,https://quiz-orcin-nine.vercel.app",
+    "CORS_ALLOW_CREDENTIALS": "true",
+    "CORS_ALLOWED_HEADERS": "Content-Type,Authorization",
+    "CORS_ALLOWED_METHODS": "GET,POST,OPTIONS",
+  },
 }
 ```
+
+#### Environment Variables
+
+The API uses the following environment variables for configuration:
+
+| Variable                 | Description                                   | Example                                           |
+| ------------------------ | --------------------------------------------- | ------------------------------------------------- |
+| `CORS_ALLOWED_ORIGINS`   | Comma-separated list of allowed origins       | `"http://localhost:3000,https://your-domain.com"` |
+| `CORS_ALLOW_CREDENTIALS` | Whether to allow credentials in CORS requests | `"true"`                                          |
+| `CORS_ALLOWED_HEADERS`   | Comma-separated list of allowed headers       | `"Content-Type,Authorization"`                    |
+| `CORS_ALLOWED_METHODS`   | Comma-separated list of allowed HTTP methods  | `"GET,POST,OPTIONS"`                              |
 
 ## Testing
 
@@ -321,19 +384,60 @@ pnpm test:watch
 
 ## CORS Configuration
 
+The API uses environment-based CORS configuration, making it easy to manage allowed origins across different deployments.
+
+### Current Configuration
+
 The API is configured to accept requests from:
 
-- `http://localhost:3001` (Next.js development server)
-- `http://localhost:3000` (Alternative development server)
-- Any origin (`*`) for development flexibility
+- `http://localhost:3000` (Local development server)
+- `https://quiz-orcin-nine.vercel.app` (Production Vercel deployment)
 
-For production, update the CORS origins in `src/index.ts`:
+### How It Works
+
+CORS settings are configured through environment variables in `wrangler.jsonc`:
 
 ```typescript
-cors({
-  origin: ['https://your-domain.com'],
-  credentials: true,
+// src/index.ts
+app.use('/api/*', (c, next) => {
+  const env = c.env;
+  const allowedOrigins = env.CORS_ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+  const allowCredentials = env.CORS_ALLOW_CREDENTIALS === 'true';
+  const allowedHeaders = env.CORS_ALLOWED_HEADERS?.split(',') || ['Content-Type', 'Authorization'];
+  const allowedMethods = env.CORS_ALLOWED_METHODS?.split(',') || ['GET', 'POST', 'OPTIONS'];
+
+  return cors({
+    origin: allowedOrigins,
+    credentials: allowCredentials,
+    allowHeaders: allowedHeaders,
+    allowMethods: allowedMethods,
+  })(c, next);
 });
+```
+
+### Updating for Your Deployment
+
+To add or modify allowed origins:
+
+1. Edit `wrangler.jsonc`:
+
+```jsonc
+"vars": {
+  "CORS_ALLOWED_ORIGINS": "http://localhost:3000,https://your-domain.com",
+  // ... other CORS settings
+}
+```
+
+2. Regenerate TypeScript types:
+
+```bash
+pnpm cf-typegen
+```
+
+3. Deploy the changes:
+
+```bash
+pnpm deploy
 ```
 
 ## Error Handling
@@ -375,11 +479,3 @@ Potential improvements for production use:
 - [ ] Rate limiting and abuse prevention
 - [ ] Websocket support for real-time quizzes
 - [ ] Analytics and reporting
-
-## License
-
-MIT
-
-## Support
-
-For issues or questions, please create an issue in the repository.

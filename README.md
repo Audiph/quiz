@@ -2,6 +2,12 @@
 
 A full-stack quiz application built with Next.js, Cloudflare Workers, and React 19. This monorepo demonstrates modern web development practices with edge computing, server components, and type-safe development.
 
+### Honest Time Spent
+
+1. Since I don't really have much time when the email was sent Thursday 3:40am PH Time, I can only start this on Friday night PH time (10pm), after my shift. I spent around 3 hours that day only building the boilerplates and strategize/planning before actually coding
+2. I continued this the day after, which is Saturday night time 9pm up until now (Sun ~3am; right before the deadline I believe). This time, I started working on it and actually finish it.
+3. So, total of 9hrs.
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -195,6 +201,7 @@ User Input → Client Validation → Server Action (Zod) → API (Custom) → Re
    - 🎯 **Production**: Add PostgreSQL/MongoDB/D1
 
 3. **Open CORS Policy**
+
    ```typescript
    cors({ origin: '*' });
    ```
@@ -342,15 +349,3 @@ pnpm build
 3. **Limited Question Bank**: 15 hardcoded questions
 4. **No Admin Interface**: Questions must be edited in code
 5. **No Analytics**: No tracking of quiz performance
-
-## 🤝 Contributing
-
-This is a demonstration project showcasing modern web development practices. Feel free to fork and extend!
-
-## 📄 License
-
-[Add your license here]
-
----
-
-Built with modern web technologies to demonstrate full-stack TypeScript development with edge computing.

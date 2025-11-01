@@ -42,7 +42,7 @@ export function QuestionCard({ question, index, value, onChange, error }: Questi
     if (isCheckboxQuestion(question)) {
       onChange(checkboxValues);
     }
-  }, [checkboxValues]);
+  }, [checkboxValues, onChange, question]);
 
   const handleCheckboxChange = (choiceIndex: number, checked: boolean) => {
     setCheckboxValues(prev => {
