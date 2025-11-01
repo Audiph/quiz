@@ -4,6 +4,6 @@ import { config } from "@audiph/eslint-config/base";
 export default [
   ...config,
   {
-    ignores: [".wrangler/**", "dist/**", "node_modules/**"],
+    ignores: [".wrangler/**", "dist/**", "node_modules/**", "worker-configuration.d.ts"],
   },
 ];
