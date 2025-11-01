@@ -1,9 +1,9 @@
 'use server';
 
-import { fetchQuiz, gradeQuiz } from '@/common/api-handlers/quiz';
-import { isErrorResponse } from '@/common/types/api';
-import type { GetQuizResponse, GradeResponse } from '@/common/types/api';
 import { quizStartSchema, quizSubmissionSchema } from '@/app/schemas/quiz.schema';
+import { fetchQuiz, gradeQuiz } from '@/common/api-handlers/quiz';
+import type { GetQuizResponse, GradeResponse } from '@/common/types/api';
+import { isErrorResponse } from '@/common/types/api';
 import { revalidatePath } from 'next/cache';
 
 export type QuizStartState = {
@@ -20,7 +20,7 @@ export type QuizSubmitState = {
 
 export async function startQuizAction(
   _prevState: QuizStartState,
-  formData: FormData
+  formData: FormData,
 ): Promise<QuizStartState> {
   try {
     const rawData = {
@@ -66,7 +66,7 @@ export async function startQuizAction(
 
 export async function submitQuizAction(
   _prevState: QuizSubmitState,
-  formData: FormData
+  formData: FormData,
 ): Promise<QuizSubmitState> {
   try {
     const answersJson = formData.get('answers') as string;

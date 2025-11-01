@@ -1,7 +1,7 @@
 'use client';
 
-import { Progress } from '@audiph/ui/components/progress';
 import { Card, CardContent } from '@audiph/ui/components/card';
+import { Progress } from '@audiph/ui/components/progress';
 
 interface QuizProgressProps {
   currentQuestion: number;
@@ -9,7 +9,11 @@ interface QuizProgressProps {
   answeredQuestions: number;
 }
 
-export function QuizProgress({ currentQuestion: _currentQuestion, totalQuestions, answeredQuestions }: QuizProgressProps) {
+export function QuizProgress({
+  currentQuestion: _currentQuestion,
+  totalQuestions,
+  answeredQuestions,
+}: QuizProgressProps) {
   const progressPercentage = (answeredQuestions / totalQuestions) * 100;
 
   return (

@@ -75,11 +75,13 @@ export interface HealthResponse {
 }
 
 export function isErrorResponse(response: object | null | undefined): response is ErrorResponse {
-  return response !== null &&
+  return (
+    response !== null &&
     response !== undefined &&
     typeof response === 'object' &&
     'error' in response &&
-    'message' in response;
+    'message' in response
+  );
 }
 
 export function isTextQuestion(question: ClientQuestion): question is ClientTextQuestion {

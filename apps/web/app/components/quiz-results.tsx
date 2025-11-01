@@ -1,11 +1,18 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@audiph/ui/components/card';
+import type { GradeResponse, QuestionResult } from '@/common/types/api';
+import { calculatePercentage } from '@/common/utils/calculate-percentage';
 import { Button } from '@audiph/ui/components/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@audiph/ui/components/card';
 import { Progress } from '@audiph/ui/components/progress';
 import { Separator } from '@audiph/ui/components/separator';
-import { calculatePercentage } from '@/common/utils/calculate-percentage';
-import type { GradeResponse, QuestionResult } from '@/common/types/api';
 
 interface QuizResultsProps {
   result: GradeResponse;
@@ -42,16 +49,12 @@ export function QuizResults({ result, onRetry }: QuizResultsProps) {
         <CardHeader className="text-center">
           <div className="text-6xl mb-4">{getGradeEmoji(percentage)}</div>
           <CardTitle className="text-3xl">Quiz Complete!</CardTitle>
-          <CardDescription className="text-lg mt-2">
-            {getGradeMessage(percentage)}
-          </CardDescription>
+          <CardDescription className="text-lg mt-2">{getGradeMessage(percentage)}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             <div className="text-center">
-              <div className="text-5xl font-bold mb-2">
-                {percentage}%
-              </div>
+              <div className="text-5xl font-bold mb-2">{percentage}%</div>
               <p className="text-muted-foreground">
                 You got {result.score} out of {result.total} questions correct
               </p>
@@ -84,9 +87,7 @@ export function QuizResults({ result, onRetry }: QuizResultsProps) {
                       <span className="w-8 h-8 rounded-full bg-background flex items-center justify-center text-sm font-medium">
                         {index + 1}
                       </span>
-                      <span className="text-sm">
-                        Question {index + 1}
-                      </span>
+                      <span className="text-sm">Question {index + 1}</span>
                     </div>
                     <span className={`font-medium ${getResultColor(questionResult.correct)}`}>
                       {questionResult.correct ? '✓ Correct' : '✗ Incorrect'}
@@ -129,7 +130,9 @@ export function QuizResults({ result, onRetry }: QuizResultsProps) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Status</p>
-              <p className={`text-2xl font-bold ${isPassing ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+              <p
+                className={`text-2xl font-bold ${isPassing ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+              >
                 {isPassing ? 'PASSED' : 'FAILED'}
               </p>
             </div>

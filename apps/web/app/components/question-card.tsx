@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import type { Answer } from '@/app/schemas/quiz.schema';
+import {
+  type ClientQuestion,
+  isCheckboxQuestion,
+  isRadioQuestion,
+  isTextQuestion,
+} from '@/common/types/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@audiph/ui/components/card';
-import { Input } from '@audiph/ui/components/input';
-import { RadioGroup, RadioGroupItem } from '@audiph/ui/components/radio-group';
 import { Checkbox } from '@audiph/ui/components/checkbox';
 import {
   Field,
@@ -14,13 +18,9 @@ import {
   FieldLabel,
   FieldSet,
 } from '@audiph/ui/components/field';
-import {
-  type ClientQuestion,
-  isTextQuestion,
-  isRadioQuestion,
-  isCheckboxQuestion,
-} from '@/common/types/api';
-import type { Answer } from '@/app/schemas/quiz.schema';
+import { Input } from '@audiph/ui/components/input';
+import { RadioGroup, RadioGroupItem } from '@audiph/ui/components/radio-group';
+import { useEffect, useState } from 'react';
 
 interface QuestionCardProps {
   question: ClientQuestion;
@@ -45,11 +45,11 @@ export function QuestionCard({ question, index, value, onChange, error }: Questi
   }, [checkboxValues]);
 
   const handleCheckboxChange = (choiceIndex: number, checked: boolean) => {
-    setCheckboxValues((prev) => {
+    setCheckboxValues(prev => {
       if (checked) {
         return [...prev, choiceIndex].sort((a, b) => a - b);
       }
-      return prev.filter((v) => v !== choiceIndex);
+      return prev.filter(v => v !== choiceIndex);
     });
   };
 
@@ -62,7 +62,7 @@ export function QuestionCard({ question, index, value, onChange, error }: Questi
               id={question.id}
               name={`question-${question.id}`}
               value={(value as string) || ''}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={e => onChange(e.target.value)}
               placeholder="Type your answer..."
               aria-invalid={!!error}
               aria-describedby={error ? `${question.id}-error` : undefined}
@@ -78,7 +78,7 @@ export function QuestionCard({ question, index, value, onChange, error }: Questi
         <FieldSet>
           <RadioGroup
             value={value !== undefined ? String(value) : undefined}
-            onValueChange={(val) => onChange(Number(val))}
+            onValueChange={val => onChange(Number(val))}
             name={`question-${question.id}`}
           >
             <FieldGroup>
@@ -115,9 +115,7 @@ export function QuestionCard({ question, index, value, onChange, error }: Questi
                 <Checkbox
                   id={`${question.id}-${choiceIndex}`}
                   checked={checkboxValues.includes(choiceIndex)}
-                  onCheckedChange={(checked) =>
-                    handleCheckboxChange(choiceIndex, checked as boolean)
-                  }
+                  onCheckedChange={checked => handleCheckboxChange(choiceIndex, checked as boolean)}
                 />
                 <FieldLabel
                   htmlFor={`${question.id}-${choiceIndex}`}

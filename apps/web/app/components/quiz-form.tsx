@@ -1,18 +1,17 @@
 'use client';
 
-import { useActionState, startTransition } from 'react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { submitQuizAction, type QuizSubmitState } from '@/app/actions/quiz.actions';
+import type { Answer } from '@/app/schemas/quiz.schema';
+import type { GetQuizResponse } from '@/common/types/api';
 import { Button } from '@audiph/ui/components/button';
 import { Card, CardContent, CardFooter } from '@audiph/ui/components/card';
 import { Separator } from '@audiph/ui/components/separator';
+import { toast } from '@audiph/ui/components/sonner';
+import { startTransition, useActionState, useCallback, useEffect, useRef, useState } from 'react';
 import { QuestionCard } from './question-card';
-import { QuizTimer } from './quiz-timer';
 import { QuizProgress } from './quiz-progress';
 import { QuizResults } from './quiz-results';
-import { submitQuizAction, type QuizSubmitState } from '@/app/actions/quiz.actions';
-import type { GetQuizResponse } from '@/common/types/api';
-import type { Answer } from '@/app/schemas/quiz.schema';
-import { toast } from '@audiph/ui/components/sonner';
+import { QuizTimer } from './quiz-timer';
 
 interface QuizFormProps {
   quiz: GetQuizResponse;
@@ -31,7 +30,7 @@ export function QuizForm({ quiz, onReset }: QuizFormProps) {
   };
   const [state, formAction, isPending] = useActionState(submitQuizAction, initialState);
 
-  const answeredQuestions = Object.keys(answers).filter((key) => {
+  const answeredQuestions = Object.keys(answers).filter(key => {
     const value = answers[key];
     if (Array.isArray(value)) {
       return value.length > 0;
@@ -40,12 +39,12 @@ export function QuizForm({ quiz, onReset }: QuizFormProps) {
   }).length;
 
   const handleAnswerChange = useCallback((questionId: string, value: Answer['value']) => {
-    setAnswers((prev) => ({
+    setAnswers(prev => ({
       ...prev,
       [questionId]: value,
     }));
 
-    setValidationErrors((prev) => {
+    setValidationErrors(prev => {
       const newErrors = { ...prev };
       delete newErrors[questionId];
       return newErrors;
@@ -55,7 +54,7 @@ export function QuizForm({ quiz, onReset }: QuizFormProps) {
   const validateAnswers = useCallback(() => {
     const errors: Record<string, string> = {};
 
-    quiz.questions.forEach((question) => {
+    quiz.questions.forEach(question => {
       const answer = answers[question.id];
 
       if (answer === undefined || answer === '' || (Array.isArray(answer) && answer.length === 0)) {
@@ -67,36 +66,39 @@ export function QuizForm({ quiz, onReset }: QuizFormProps) {
     return Object.keys(errors).length === 0;
   }, [answers, quiz.questions]);
 
-  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    if (!validateAnswers()) {
-      toast.error('Please answer all questions before submitting');
-      return;
-    }
+      if (!validateAnswers()) {
+        toast.error('Please answer all questions before submitting');
+        return;
+      }
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    const formattedAnswers: Answer[] = quiz.questions.map((question) => ({
-      id: question.id,
-      value: answers[question.id] ?? '',
-    }));
+      const formattedAnswers: Answer[] = quiz.questions.map(question => ({
+        id: question.id,
+        value: answers[question.id] ?? '',
+      }));
 
-    formData.append('answers', JSON.stringify(formattedAnswers));
-    formData.append('quizId', quiz.quizId);
+      formData.append('answers', JSON.stringify(formattedAnswers));
+      formData.append('quizId', quiz.quizId);
 
-    setHasSubmitted(true);
-    startTransition(() => {
-      formAction(formData);
-    });
-  }, [answers, quiz, validateAnswers, formAction]);
+      setHasSubmitted(true);
+      startTransition(() => {
+        formAction(formData);
+      });
+    },
+    [answers, quiz, validateAnswers, formAction],
+  );
 
   const handleTimeUp = useCallback(() => {
     toast.warning('Time is up! Submitting your answers...');
 
     if (formRef.current && !hasSubmitted) {
       const formData = new FormData();
-      const formattedAnswers: Answer[] = quiz.questions.map((question) => ({
+      const formattedAnswers: Answer[] = quiz.questions.map(question => ({
         id: question.id,
         value: answers[question.id] || (Array.isArray(answers[question.id]) ? [] : ''),
       }));
@@ -137,7 +139,7 @@ export function QuizForm({ quiz, onReset }: QuizFormProps) {
               question={question}
               index={index}
               value={answers[question.id]}
-              onChange={(value) => handleAnswerChange(question.id, value)}
+              onChange={value => handleAnswerChange(question.id, value)}
               error={validationErrors[question.id]}
             />
           ))}

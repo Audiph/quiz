@@ -75,6 +75,7 @@ quiz/
 ### Runtime Environments
 
 #### Frontend: Node.js Runtime (Next.js)
+
 - **Framework**: Next.js 16 with React 19
 - **Router**: **App Router** (not Pages Router)
 - **Rendering**: Server Components with Server Actions
@@ -82,6 +83,7 @@ quiz/
 - **Data Fetching**: Server Actions calling API endpoints
 
 #### Backend: Edge Runtime (Cloudflare Workers)
+
 - **Framework**: Hono 4.10 - lightweight edge framework
 - **Runtime**: Cloudflare Workers (V8 isolates)
 - **Deployment**: Via Wrangler CLI
@@ -120,6 +122,7 @@ graph TD
    - **Zod schemas** for runtime type safety
    - Validates data before API calls
    - Type inference from schemas
+
    ```typescript
    quizStartSchema: {
      questionLimit: z.number().min(8).max(12),
@@ -143,40 +146,44 @@ User Input → Client Validation → Server Action (Zod) → API (Custom) → Re
 
 ### Frontend (apps/web)
 
-| Library | Version | Purpose | Rationale |
-|---------|---------|---------|-----------|
-| **next** | 16.0.0 | React framework | Server components, App Router, built-in optimizations |
-| **react** | 19.2.0 | UI library | Latest features including Server Actions |
-| **zod** | 4.1.12 | Schema validation | Type-safe runtime validation with TypeScript inference |
-| **tailwindcss** | 4.1.5 | Styling | Utility-first CSS, v4 for modern features |
+| Library         | Version | Purpose           | Rationale                                              |
+| --------------- | ------- | ----------------- | ------------------------------------------------------ |
+| **next**        | 16.0.0  | React framework   | Server components, App Router, built-in optimizations  |
+| **react**       | 19.2.0  | UI library        | Latest features including Server Actions               |
+| **zod**         | 4.1.12  | Schema validation | Type-safe runtime validation with TypeScript inference |
+| **tailwindcss** | 4.1.5   | Styling           | Utility-first CSS, v4 for modern features              |
 
 ### API (apps/api)
 
-| Library | Version | Purpose | Rationale |
-|---------|---------|---------|-----------|
-| **hono** | 4.10.4 | Web framework | Optimized for edge runtime, lightweight, type-safe |
-| **wrangler** | 4.45.3 | CF deployment | Official Cloudflare Workers CLI |
-| **vitest** | 2.1.8 | Testing | Fast unit testing with edge environment support |
+| Library      | Version | Purpose       | Rationale                                          |
+| ------------ | ------- | ------------- | -------------------------------------------------- |
+| **hono**     | 4.10.4  | Web framework | Optimized for edge runtime, lightweight, type-safe |
+| **wrangler** | 4.45.3  | CF deployment | Official Cloudflare Workers CLI                    |
+| **vitest**   | 2.1.8   | Testing       | Fast unit testing with edge environment support    |
 
 ### UI Package (packages/ui)
 
-| Library | Version | Purpose | Rationale |
-|---------|---------|---------|-----------|
-| **@radix-ui/*** | Various | Headless UI | Accessible primitives, unstyled for flexibility |
-| **class-variance-authority** | 0.7.1 | Component variants | Type-safe variant styling |
-| **lucide-react** | 0.548.0 | Icons | Consistent icon set, tree-shakeable |
-| **sonner** | 2.0.7 | Toast notifications | Beautiful, accessible notifications |
-| **tailwind-merge** | 3.3.1 | Class merging | Resolve Tailwind class conflicts |
+| Library                      | Version | Purpose             | Rationale                                       |
+| ---------------------------- | ------- | ------------------- | ----------------------------------------------- |
+| **@radix-ui/\***             | Various | Headless UI         | Accessible primitives, unstyled for flexibility |
+| **class-variance-authority** | 0.7.1   | Component variants  | Type-safe variant styling                       |
+| **lucide-react**             | 0.548.0 | Icons               | Consistent icon set, tree-shakeable             |
+| **sonner**                   | 2.0.7   | Toast notifications | Beautiful, accessible notifications             |
+| **tailwind-merge**           | 3.3.1   | Class merging       | Resolve Tailwind class conflicts                |
 
 ## 🎯 Trade-offs and Shortcuts
 
 ### Development Speed Optimizations
 
 1. **TypeScript Build Errors Ignored**
+
    ```typescript
    // next.config.ts
-   typescript: { ignoreBuildErrors: true }
+   typescript: {
+     ignoreBuildErrors: true;
+   }
    ```
+
    - ⚡ **Benefit**: Faster iteration during development
    - ⚠️ **Risk**: Potential runtime errors in production
    - 🎯 **Better approach**: Fix type errors properly
@@ -189,8 +196,9 @@ User Input → Client Validation → Server Action (Zod) → API (Custom) → Re
 
 3. **Open CORS Policy**
    ```typescript
-   cors({ origin: '*' })
+   cors({ origin: '*' });
    ```
+
    - ⚡ **Benefit**: Works from any domain during dev
    - ⚠️ **Risk**: CSRF vulnerability
    - 🎯 **Production**: Whitelist specific origins
@@ -219,13 +227,13 @@ User Input → Client Validation → Server Action (Zod) → API (Custom) → Re
 
 ### Security Considerations
 
-| Issue | Current State | Production Fix |
-|-------|--------------|----------------|
-| No Authentication | Anyone can take quiz | Add auth (NextAuth.js/Clerk) |
-| No Rate Limiting | Unlimited requests | Add rate limiting middleware |
-| No Input Sanitization | Basic validation only | Add DOMPurify for XSS protection |
-| Answers in Client Memory | Could be inspected | Move grading to server-only |
-| No Session Management | Stateless | Add session tokens |
+| Issue                    | Current State         | Production Fix                   |
+| ------------------------ | --------------------- | -------------------------------- |
+| No Authentication        | Anyone can take quiz  | Add auth (NextAuth.js/Clerk)     |
+| No Rate Limiting         | Unlimited requests    | Add rate limiting middleware     |
+| No Input Sanitization    | Basic validation only | Add DOMPurify for XSS protection |
+| Answers in Client Memory | Could be inspected    | Move grading to server-only      |
+| No Session Management    | Stateless             | Add session tokens               |
 
 ## 🚦 Features
 
@@ -280,12 +288,14 @@ pnpm build
 ## 📊 Performance Characteristics
 
 ### Frontend
+
 - **Bundle Size**: Optimized with tree-shaking
 - **First Load**: Server components reduce JS payload
 - **Caching**: Turborepo caches build outputs
 - **State Management**: Minimal, no heavy libraries
 
 ### API
+
 - **Cold Start**: ~0ms (Cloudflare Workers always warm)
 - **Response Time**: <50ms globally (edge distribution)
 - **Memory**: In-memory questions (no DB latency)
@@ -294,18 +304,21 @@ pnpm build
 ## 🔄 Future Improvements
 
 ### High Priority
+
 1. Fix TypeScript build errors
 2. Add proper authentication
 3. Implement rate limiting
 4. Add comprehensive test coverage
 
 ### Medium Priority
+
 1. Add database for question persistence
 2. Implement user profiles and score history
 3. Add question management interface
 4. Support for images in questions
 
 ### Nice to Have
+
 1. Multiplayer quiz mode
 2. Question categories/topics
 3. Leaderboards

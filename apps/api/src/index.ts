@@ -8,15 +8,21 @@ const app = new Hono<{ Bindings: CloudflareBindings }>();
 
 app.use('*', logger());
 
-app.use(
-  '/api/*',
-  cors({
-    origin: ['http://localhost:3001', 'http://localhost:3000', '*'],
-    credentials: true,
-    allowHeaders: ['Content-Type', 'Authorization'],
-    allowMethods: ['GET', 'POST', 'OPTIONS'],
-  }),
-);
+app.use('/api/*', (c, next) => {
+  // Get CORS configuration from environment variables
+  const env = c.env;
+  const allowedOrigins = env.CORS_ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+  const allowCredentials = env.CORS_ALLOW_CREDENTIALS === 'true';
+  const allowedHeaders = env.CORS_ALLOWED_HEADERS?.split(',') || ['Content-Type', 'Authorization'];
+  const allowedMethods = env.CORS_ALLOWED_METHODS?.split(',') || ['GET', 'POST', 'OPTIONS'];
+
+  return cors({
+    origin: allowedOrigins,
+    credentials: allowCredentials,
+    allowHeaders: allowedHeaders,
+    allowMethods: allowedMethods,
+  })(c, next);
+});
 app.get('/health', c => c.json({ status: 'ok', timestamp: Date.now() }));
 app.route('/api/quiz', quizRoute);
 app.route('/api/grade', gradeRoute);

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
 import { Card, CardContent } from '@audiph/ui/components/card';
+import { useCallback, useEffect, useState } from 'react';
 
 interface QuizTimerProps {
   timeLimit: number;
@@ -16,7 +16,7 @@ export function QuizTimer({ timeLimit, onTimeUp, isPaused = false }: QuizTimerPr
     if (isPaused) return;
 
     const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
+      setTimeLeft(prevTime => {
         if (prevTime <= 1) {
           clearInterval(timer);
           onTimeUp?.();
