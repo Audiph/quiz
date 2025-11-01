@@ -20,7 +20,7 @@ import {
 } from '@audiph/ui/components/field';
 import { Input } from '@audiph/ui/components/input';
 import { RadioGroup, RadioGroupItem } from '@audiph/ui/components/radio-group';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface QuestionCardProps {
   question: ClientQuestion;
@@ -38,19 +38,13 @@ export function QuestionCard({ question, index, value, onChange, error }: Questi
     return [];
   });
 
-  useEffect(() => {
-    if (isCheckboxQuestion(question)) {
-      onChange(checkboxValues);
-    }
-  }, [checkboxValues, onChange, question]);
-
   const handleCheckboxChange = (choiceIndex: number, checked: boolean) => {
-    setCheckboxValues(prev => {
-      if (checked) {
-        return [...prev, choiceIndex].sort((a, b) => a - b);
-      }
-      return prev.filter(v => v !== choiceIndex);
-    });
+    const newValues = checked
+      ? [...checkboxValues, choiceIndex].sort((a, b) => a - b)
+      : checkboxValues.filter(v => v !== choiceIndex);
+
+    setCheckboxValues(newValues);
+    onChange(newValues);
   };
 
   const renderQuestion = () => {

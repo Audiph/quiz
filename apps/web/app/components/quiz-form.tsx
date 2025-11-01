@@ -51,6 +51,13 @@ export function QuizForm({ quiz, onReset }: QuizFormProps) {
     });
   }, []);
 
+  const getOnChangeHandler = useCallback(
+    (questionId: string) => {
+      return (value: Answer['value']) => handleAnswerChange(questionId, value);
+    },
+    [handleAnswerChange],
+  );
+
   const validateAnswers = useCallback(() => {
     const errors: Record<string, string> = {};
 
@@ -139,7 +146,7 @@ export function QuizForm({ quiz, onReset }: QuizFormProps) {
               question={question}
               index={index}
               value={answers[question.id]}
-              onChange={value => handleAnswerChange(question.id, value)}
+              onChange={getOnChangeHandler(question.id)}
               error={validationErrors[question.id]}
             />
           ))}
